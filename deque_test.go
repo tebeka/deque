@@ -7,14 +7,14 @@ var (
 )
 
 func TestEmpty(t *testing.T) {
-	q := NewDeque()
+	q := New()
 	if q.Len() != 0 {
 		t.Fatalf("Empty queue with size: %d", q.Len())
 	}
 }
 
 func TestAppend(t *testing.T) {
-	q := NewDeque()
+	q := New()
 	for i := 0; i < nItems; i++ {
 		q.Append(i)
 	}
@@ -24,7 +24,7 @@ func TestAppend(t *testing.T) {
 }
 
 func TestAppendLeft(t *testing.T) {
-	q := NewDeque()
+	q := New()
 	for i := 0; i < nItems; i++ {
 		q.AppendLeft(i)
 	}
@@ -34,7 +34,7 @@ func TestAppendLeft(t *testing.T) {
 }
 
 func TestPop(t *testing.T) {
-	dq := NewDeque()
+	dq := New()
 	for i := 0; i < nItems; i++ {
 		dq.Append(i)
 	}
@@ -63,7 +63,7 @@ func TestPop(t *testing.T) {
 }
 
 func TestPopLeft(t *testing.T) {
-	dq := NewDeque()
+	dq := New()
 	for i := 0; i < nItems; i++ {
 		dq.Append(i)
 	}
@@ -96,21 +96,21 @@ type Point struct {
 }
 
 func BenchmarkAppend(b *testing.B) {
-	dq := NewDeque()
+	dq := New()
 	for i := 0; i < b.N; i++ {
 		dq.Append(&Point{i, i})
 	}
 }
 
 func BenchmarkAppendLeft(b *testing.B) {
-	dq := NewDeque()
+	dq := New()
 	for i := 0; i < b.N; i++ {
 		dq.AppendLeft(&Point{i, i})
 	}
 }
 
 func BenchmarkPop(b *testing.B) {
-	dq := NewDeque()
+	dq := New()
 	for i := 0; i < b.N; i++ {
 		dq.Append(&Point{i, i})
 	}
@@ -120,7 +120,7 @@ func BenchmarkPop(b *testing.B) {
 }
 
 func BenchmarkPopLeft(b *testing.B) {
-	dq := NewDeque()
+	dq := New()
 	for i := 0; i < b.N; i++ {
 		dq.Append(&Point{i, i})
 	}

@@ -30,8 +30,8 @@ type Deque struct {
 	size              int
 }
 
-// NewDeque returns a new Deque
-func NewDeque() *Deque {
+// New returns a new Deque
+func New() *Deque {
 	block := newBlock(nil, nil)
 	return &Deque{
 		right:    block,
