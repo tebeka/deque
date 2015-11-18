@@ -15,7 +15,7 @@ func TestEmpty(t *testing.T) {
 
 func newFilled(n int) *Deque {
 	dq := New()
-	for i := 0; i < nItems; i++ {
+	for i := 0; i < n; i++ {
 		dq.Append(i)
 	}
 	return dq
@@ -167,40 +167,61 @@ func TestBounded(t *testing.T) {
 	}
 }
 
-type Point struct {
-	X, Y int
+func TestRotate(t *testing.T) {
+	// [0, 1, 2, 3]
+	dq := newFilled(4)
+	dq.Rotate(2)
+	// [2, 3, 0, 1]
+
+	val, err := dq.Get(0)
+	if err != nil {
+		t.Fatalf("Get(0) error: %s", err)
+	}
+	i := val.(int)
+	if i != 2 {
+		t.Fatalf("Get(0) -> %d, expected 2", i)
+	}
+	val, err = dq.Get(3)
+	if err != nil {
+		t.Fatalf("Get(3) error: %s", err)
+	}
+	i = val.(int)
+	if i != 1 {
+		t.Fatalf("Get(3) -> %d, expected 1", i)
+	}
+
+	// [0, 1, 2, 3, 4]
+	dq = newFilled(5)
+	dq.Rotate(-2)
+	// [2, 3, 4, 0, 1]
+	val, err = dq.Get(0)
+	if err != nil {
+		t.Fatalf("Get(0) error: %s", err)
+	}
+	i = val.(int)
+	if i != 2 {
+		t.Fatalf("Get(0) -> %d, expected 2", i)
+	}
+	val, err = dq.Get(4)
+	if err != nil {
+		t.Fatalf("Get(4) error: %s", err)
+	}
+	i = val.(int)
+	if i != 1 {
+		t.Fatalf("Get(3) -> %d, expected 1", i)
+	}
 }
 
-func BenchmarkAppend(b *testing.B) {
-	dq := New()
-	for i := 0; i < b.N; i++ {
-		dq.Append(&Point{i, i})
+func TestString(t *testing.T) {
+	dq := newFilled(3)
+	s := dq.String()
+	if s != "Deque{0, 1, 2}" {
+		t.Fatalf("bad string: %s", s)
 	}
-}
 
-func BenchmarkAppendLeft(b *testing.B) {
-	dq := New()
-	for i := 0; i < b.N; i++ {
-		dq.AppendLeft(&Point{i, i})
-	}
-}
-
-func BenchmarkPop(b *testing.B) {
-	dq := New()
-	for i := 0; i < b.N; i++ {
-		dq.Append(&Point{i, i})
-	}
-	for dq.Len() > 0 {
-		dq.Pop()
-	}
-}
-
-func BenchmarkPopLeft(b *testing.B) {
-	dq := New()
-	for i := 0; i < b.N; i++ {
-		dq.Append(&Point{i, i})
-	}
-	for dq.Len() > 0 {
-		dq.PopLeft()
+	dq = newFilled(30)
+	s = dq.String()
+	if s != "Deque{0, 1, 2, 3, 4, 5, 6, 7, 8, ...}" {
+		t.Fatalf("bad string: %s", s)
 	}
 }

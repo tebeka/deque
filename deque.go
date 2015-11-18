@@ -2,11 +2,16 @@
 // collections.deque
 package deque
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 const (
 	blockLen    = 64
 	blockCenter = (blockLen - 1) / 2
+
+	Version = "1.0.0"
 )
 
 type block struct {
@@ -196,4 +201,51 @@ func (dq *Deque) Set(i int, val interface{}) error {
 	b, idx := dq.locate(i)
 	b.data[idx] = val
 	return nil
+}
+
+func (dq *Deque) Rotate(n int) {
+	if dq.Len() == 0 || n == 0 {
+		return
+	}
+
+	var popfn func() (interface{}, error)
+	var appendfn func(interface{})
+
+	if n > 0 {
+		popfn = dq.Pop
+		appendfn = dq.AppendLeft
+	} else {
+		popfn = dq.PopLeft
+		appendfn = dq.Append
+		n = -n
+	}
+
+	for i := 0; i < n; i++ {
+		val, _ := popfn()
+		appendfn(val)
+	}
+}
+
+func (dq *Deque) String() string {
+	var buf bytes.Buffer
+
+	fmt.Fprintf(&buf, "Deque{")
+	n := dq.Len()
+	chopped := false
+	if n > 10 {
+		n = 10
+		chopped = true
+	}
+	for i := 0; i < n-1; i++ {
+		val, _ := dq.Get(i)
+		fmt.Fprintf(&buf, "%v, ", val)
+	}
+	if chopped {
+		fmt.Fprintf(&buf, "...")
+	} else {
+		val, _ := dq.Get(n - 1)
+		fmt.Fprintf(&buf, "%v", val)
+	}
+	fmt.Fprintf(&buf, "}")
+	return buf.String()
 }
