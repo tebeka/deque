@@ -33,6 +33,6 @@ Example:
 
 		// Output:
 		// Deque{"hello", 4, 1, 2}
-}
+	}
 */
 package deque
