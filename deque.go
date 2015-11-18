@@ -28,9 +28,10 @@ type Deque struct {
 	left, right       *block
 	leftIdx, rightIdx int /* in range(BLOCKLEN) */
 	size              int
+	maxSize           int
 }
 
-// New returns a new Deque
+// New returns a new unbounded Deque
 func New() *Deque {
 	block := newBlock(nil, nil)
 	return &Deque{
@@ -39,7 +40,27 @@ func New() *Deque {
 		leftIdx:  blockCenter + 1,
 		rightIdx: blockCenter,
 		size:     0,
+		maxSize:  -1,
 	}
+}
+
+// NewBounded returns a new bounded Deque
+// A bounded Deque will not grow over maxSize items
+func NewBounded(maxSize int) (*Deque, error) {
+	if maxSize <= 0 {
+		return nil, fmt.Errorf("maxSize must be > 0 (got %d)", maxSize)
+	}
+	block := newBlock(nil, nil)
+	dq := &Deque{
+		right:    block,
+		left:     block,
+		leftIdx:  blockCenter + 1,
+		rightIdx: blockCenter,
+		size:     0,
+		maxSize:  maxSize,
+	}
+
+	return dq, nil
 }
 
 // Len returns the number of items in the queue
@@ -58,6 +79,9 @@ func (dq *Deque) Append(item interface{}) {
 	dq.size += 1
 	dq.rightIdx += 1
 	dq.right.data[dq.rightIdx] = item
+	if dq.maxSize != -1 && dq.Len() > dq.maxSize {
+		dq.PopLeft()
+	}
 }
 
 // AppendLeft appends an item to the left of the deque
@@ -71,6 +95,9 @@ func (dq *Deque) AppendLeft(item interface{}) {
 	dq.size += 1
 	dq.leftIdx -= 1
 	dq.left.data[dq.leftIdx] = item
+	if dq.maxSize != -1 && dq.Len() > dq.maxSize {
+		dq.Pop()
+	}
 }
 
 // Pop removes and return the rightmost element
@@ -120,4 +147,54 @@ func (dq *Deque) PopLeft() (interface{}, error) {
 		}
 	}
 	return item, nil
+}
+
+func (dq *Deque) locate(i int) (b *block, idx int) {
+	if i == 0 {
+		i = dq.leftIdx
+		b = dq.left
+	} else if i == dq.Len()-1 {
+		i = dq.rightIdx
+		b = dq.right
+	} else {
+		index := i
+		i += dq.leftIdx
+		n := i / blockLen
+		i %= blockLen
+		if index < (dq.Len() >> 1) {
+			b = dq.right
+			for ; n > 0; n-- {
+				b = b.right
+			}
+		} else {
+			n = (dq.leftIdx+dq.size-1)/blockLen - n
+			b = dq.right
+			for ; n > 0; n-- {
+				b = b.left
+			}
+		}
+	}
+	return b, i
+}
+
+// Get return the item at position i
+func (dq *Deque) Get(i int) (interface{}, error) {
+	if i < 0 || i >= dq.Len() {
+		return nil, fmt.Errorf("index %d out of range", i)
+	}
+
+	b, idx := dq.locate(i)
+
+	return b.data[idx], nil
+}
+
+// Set sets the item at position i to val
+func (dq *Deque) Set(i int, val interface{}) error {
+	if i < 0 || i >= dq.Len() {
+		return fmt.Errorf("index %d out of range", i)
+	}
+
+	b, idx := dq.locate(i)
+	b.data[idx] = val
+	return nil
 }
