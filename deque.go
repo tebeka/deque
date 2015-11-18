@@ -1,6 +1,5 @@
-/*
-Deque provides a double ended queue modeled after Python's collections.deque
-*/
+// Package deque provides a double ended queue modeled after Python's
+// collections.deque
 package deque
 
 import "fmt"
@@ -76,8 +75,8 @@ func (dq *Deque) Append(item interface{}) {
 		dq.right = block
 		dq.rightIdx = -1
 	}
-	dq.size += 1
-	dq.rightIdx += 1
+	dq.size++
+	dq.rightIdx++
 	dq.right.data[dq.rightIdx] = item
 	if dq.maxSize != -1 && dq.Len() > dq.maxSize {
 		dq.PopLeft()
@@ -92,8 +91,8 @@ func (dq *Deque) AppendLeft(item interface{}) {
 		dq.left = block
 		dq.leftIdx = blockLen
 	}
-	dq.size += 1
-	dq.leftIdx -= 1
+	dq.size++
+	dq.leftIdx--
 	dq.left.data[dq.leftIdx] = item
 	if dq.maxSize != -1 && dq.Len() > dq.maxSize {
 		dq.Pop()
@@ -107,8 +106,8 @@ func (dq *Deque) Pop() (interface{}, error) {
 	}
 
 	item := dq.right.data[dq.rightIdx]
-	dq.rightIdx -= 1
-	dq.size -= 1
+	dq.rightIdx--
+	dq.size--
 	if dq.rightIdx == -1 {
 		if dq.Len() == 0 {
 			// re-center instead of freeing a block
@@ -131,8 +130,8 @@ func (dq *Deque) PopLeft() (interface{}, error) {
 	}
 
 	item := dq.left.data[dq.leftIdx]
-	dq.leftIdx += 1
-	dq.size -= 1
+	dq.leftIdx++
+	dq.size--
 
 	if dq.leftIdx == blockLen {
 		if dq.Len() == 0 {

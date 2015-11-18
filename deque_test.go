@@ -43,7 +43,7 @@ func TestPop(t *testing.T) {
 
 	count := 0
 	for dq.Len() > 0 {
-		count += 1
+		count++
 		item, err := dq.Pop()
 		if err != nil {
 			t.Fatalf("[%d] error Pop: %v", count, err)
@@ -69,7 +69,7 @@ func TestPopLeft(t *testing.T) {
 
 	count := 0
 	for dq.Len() > 0 {
-		count += 1
+		count++
 		item, err := dq.PopLeft()
 		if err != nil {
 			t.Fatalf("[%d] error PopLeft: %v", count, err)
