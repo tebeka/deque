@@ -238,13 +238,13 @@ func (dq *Deque) String() string {
 	}
 	for i := 0; i < n-1; i++ {
 		val, _ := dq.Get(i)
-		fmt.Fprintf(&buf, "%v, ", val)
+		fmt.Fprintf(&buf, "%q, ", val)
 	}
 	if chopped {
 		fmt.Fprintf(&buf, "...")
 	} else {
 		val, _ := dq.Get(n - 1)
-		fmt.Fprintf(&buf, "%v", val)
+		fmt.Fprintf(&buf, "%q", val)
 	}
 	fmt.Fprintf(&buf, "}")
 	return buf.String()
