@@ -2,7 +2,10 @@ test:
 	go test -v
 
 bench:
-	go test -bench . -v
+	go test -run NONE -bench . -v
 
+compare:
+	@echo Git head is $(shell git head)
+	cd compare && go test -run NONE -bench . -v
 
-.PHONY: test bench
+.PHONY: test bench compare
