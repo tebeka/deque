@@ -54,16 +54,8 @@ func NewBounded(maxSize int) (*Deque, error) {
 	if maxSize <= 0 {
 		return nil, fmt.Errorf("maxSize must be > 0 (got %d)", maxSize)
 	}
-	block := newBlock(nil, nil)
-	dq := &Deque{
-		right:    block,
-		left:     block,
-		leftIdx:  blockCenter + 1,
-		rightIdx: blockCenter,
-		size:     0,
-		maxSize:  maxSize,
-	}
-
+	dq := New()
+	dq.maxSize = maxSize
 	return dq, nil
 }
 
