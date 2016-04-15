@@ -11,6 +11,7 @@ const (
 	blockLen    = 64
 	blockCenter = (blockLen - 1) / 2
 
+	// Version is the package version
 	Version = "1.0.0"
 )
 
@@ -195,6 +196,8 @@ func (dq *Deque) Set(i int, val interface{}) error {
 	return nil
 }
 
+// Rotate rotates the queue.
+// If n is positive then rotate right n steps, otherwise rotate left -n steps
 func (dq *Deque) Rotate(n int) {
 	if dq.Len() == 0 || n == 0 {
 		return
