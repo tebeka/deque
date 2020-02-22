@@ -10,7 +10,7 @@ const (
 	blockCenter = (blockLen - 1) / 2
 
 	// Version is the package version
-	Version = "1.0.0"
+	Version = "0.1.1"
 )
 
 type block struct {
