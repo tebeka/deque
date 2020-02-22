@@ -6,7 +6,7 @@ We compare against:
 * github.com/eapache/queue
 
 */
-package deque
+package compare
 
 import (
 	"container/list"
