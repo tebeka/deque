@@ -1,0 +1,4 @@
+github.com/eapache/queue v1.1.0 h1:YOEu7KNc61ntiQlcEeUIoDTJ2o8mQznoNvUhiigpIqc=
+github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFPTqq+I=
+github.com/tebeka/deque v0.1.1 h1:idz+LUBBgF/LyigJF822PWg7X6uMyrPuKoNbsZJMgBU=
+github.com/tebeka/deque v0.1.1/go.mod h1:CZ6k5Cubo0ovHMGx8y8Q15RK1uv28Ic0CksAekIXP7A=
