@@ -1,6 +1,8 @@
 package deque
 
-import "testing"
+import (
+	"testing"
+)
 
 var (
 	nItems = blockLen*9 + 7
@@ -223,5 +225,30 @@ func TestString(t *testing.T) {
 	s = dq.String()
 	if s != "Deque{0, 1, 2, 3, 4, 5, 6, 7, 8, ...}" {
 		t.Fatalf("bad string: %s", s)
+	}
+}
+
+func TestAppendAndGet(t *testing.T) {
+	n := 128
+	q := New()
+
+	for i := 0; i < n; i++ {
+		q.Append(i + 1)
+	}
+
+	for i := 0; i < n; i++ {
+		o, err := q.Get(i)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		val, ok := o.(int)
+		if !ok {
+			t.Fatalf("get - %d: got %T", i, o)
+		}
+
+		if val != i+1 {
+			t.Fatalf("get - %d: %v != %v", i, i+1, val)
+		}
 	}
 }

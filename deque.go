@@ -144,6 +144,24 @@ func (dq *Deque) PopLeft() (interface{}, error) {
 	return item, nil
 }
 
+func (dq *Deque) locate(i int) (*block, int) {
+	// first block
+	firstSize := blockLen - dq.leftIdx
+	if i < firstSize {
+		return dq.left, dq.leftIdx + i
+	}
+
+	b := dq.left.right // 2nd block
+	i -= firstSize
+
+	for i >= blockLen {
+		b = b.right
+		i -= blockLen
+	}
+	return b, i
+}
+
+/*
 func (dq *Deque) locate(i int) (b *block, idx int) {
 	if i == 0 {
 		i = dq.leftIdx
@@ -171,6 +189,7 @@ func (dq *Deque) locate(i int) (b *block, idx int) {
 	}
 	return b, i
 }
+*/
 
 // Get return the item at position i
 func (dq *Deque) Get(i int) (interface{}, error) {
