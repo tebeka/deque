@@ -75,7 +75,7 @@ func (dq *Deque) Append(item interface{}) {
 	dq.rightIdx++
 	dq.right.data[dq.rightIdx] = item
 	if dq.maxSize != -1 && dq.Len() > dq.maxSize {
-		dq.PopLeft()
+		dq.PopLeft() // nolint
 	}
 }
 
@@ -91,7 +91,7 @@ func (dq *Deque) AppendLeft(item interface{}) {
 	dq.leftIdx--
 	dq.left.data[dq.leftIdx] = item
 	if dq.maxSize != -1 && dq.Len() > dq.maxSize {
-		dq.Pop()
+		dq.Pop() // nolint
 	}
 }
 

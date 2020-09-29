@@ -26,7 +26,9 @@ func BenchmarkPop(b *testing.B) {
 		dq.Append(&Point{i, i})
 	}
 	for dq.Len() > 0 {
-		dq.Pop()
+		if _, err := dq.Pop(); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -36,6 +38,8 @@ func BenchmarkPopLeft(b *testing.B) {
 		dq.Append(&Point{i, i})
 	}
 	for dq.Len() > 0 {
-		dq.PopLeft()
+		if _, err := dq.PopLeft(); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
