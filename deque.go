@@ -160,36 +160,6 @@ func (dq *Deque[T]) locate(i int) (*block[T], int) {
 	return b, i
 }
 
-/*
-func (dq *Deque) locate(i int) (b *block, idx int) {
-	if i == 0 {
-		i = dq.leftIdx
-		b = dq.left
-	} else if i == dq.Len()-1 {
-		i = dq.rightIdx
-		b = dq.right
-	} else {
-		index := i
-		i += dq.leftIdx
-		n := i / blockLen
-		i %= blockLen
-		if index < (dq.Len() >> 1) {
-			b = dq.right
-			for ; n > 0; n-- {
-				b = b.right
-			}
-		} else {
-			n = (dq.leftIdx+dq.size-1)/blockLen - n
-			b = dq.right
-			for ; n > 0; n-- {
-				b = b.left
-			}
-		}
-	}
-	return b, i
-}
-*/
-
 // Get return the item at position i
 func (dq *Deque[T]) Get(i int) (T, error) {
 	if i < 0 || i >= dq.Len() {
