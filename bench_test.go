@@ -7,21 +7,21 @@ type Point struct {
 }
 
 func BenchmarkAppend(b *testing.B) {
-	dq := New()
+	dq := New[*Point]()
 	for i := 0; i < b.N; i++ {
 		dq.Append(&Point{i, i})
 	}
 }
 
 func BenchmarkAppendLeft(b *testing.B) {
-	dq := New()
+	dq := New[*Point]()
 	for i := 0; i < b.N; i++ {
 		dq.AppendLeft(&Point{i, i})
 	}
 }
 
 func BenchmarkPop(b *testing.B) {
-	dq := New()
+	dq := New[*Point]()
 	for i := 0; i < b.N; i++ {
 		dq.Append(&Point{i, i})
 	}
@@ -33,7 +33,7 @@ func BenchmarkPop(b *testing.B) {
 }
 
 func BenchmarkPopLeft(b *testing.B) {
-	dq := New()
+	dq := New[*Point]()
 	for i := 0; i < b.N; i++ {
 		dq.Append(&Point{i, i})
 	}

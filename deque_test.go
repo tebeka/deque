@@ -9,14 +9,14 @@ var (
 )
 
 func TestEmpty(t *testing.T) {
-	q := New()
+	q := New[int]()
 	if q.Len() != 0 {
 		t.Fatalf("Empty queue with size: %d", q.Len())
 	}
 }
 
-func newFilled(n int) *Deque {
-	dq := New()
+func newFilled(n int) *Deque[int] {
+	dq := New[int]()
 	for i := 0; i < n; i++ {
 		dq.Append(i)
 	}
@@ -31,7 +31,7 @@ func TestAppend(t *testing.T) {
 }
 
 func TestAppendLeft(t *testing.T) {
-	dq := New()
+	dq := New[int]()
 	for i := 0; i < nItems; i++ {
 		dq.AppendLeft(i)
 	}
@@ -50,10 +50,9 @@ func TestPop(t *testing.T) {
 		if err != nil {
 			t.Fatalf("[%d] error Pop: %v", count, err)
 		}
-		val := item.(int)
 		expected := nItems - count
-		if val != expected {
-			t.Fatalf("Pop %d, expected %d", val, expected)
+		if item != expected {
+			t.Fatalf("Pop %d, expected %d", item, expected)
 		}
 	}
 
@@ -76,10 +75,9 @@ func TestPopLeft(t *testing.T) {
 		if err != nil {
 			t.Fatalf("[%d] error PopLeft: %v", count, err)
 		}
-		val := item.(int)
 		expected := count - 1
-		if val != expected {
-			t.Fatalf("PopLeft %d, expected %d", val, expected)
+		if item != expected {
+			t.Fatalf("PopLeft %d, expected %d", item, expected)
 		}
 	}
 
@@ -100,9 +98,8 @@ func TestGet(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Get(%d) failed on deque sized %d - %s", idx, dq.Len(), err)
 		}
-		i := item.(int)
-		if i != idx {
-			t.Fatalf("Get(%d) = %d, expected %d", idx, i, idx)
+		if item != idx {
+			t.Fatalf("Get(%d) = %d, expected %d", idx, item, idx)
 		}
 	}
 
@@ -121,24 +118,23 @@ func TestGet(t *testing.T) {
 
 func TestSet(t *testing.T) {
 	dq := newFilled(nItems)
-	val := "hello"
+	val := 17
 
 	idx := dq.Len() / 2
 	if err := dq.Set(idx, val); err != nil {
-		t.Fatalf("Set(%d, %s) of deque size %d returned error - %s",
+		t.Fatalf("Set(%d, %d) of deque size %d returned error - %s",
 			idx, val, dq.Len(), err)
 	}
 
 	item, _ := dq.Get(idx)
-	val2 := item.(string)
-	if val != val2 {
-		t.Fatalf("%s != %s at index %d", val, val2, idx)
+	if val != item {
+		t.Fatalf("%d != %d at index %d", val, item, idx)
 	}
 }
 
 func TestBounded(t *testing.T) {
 	size := 7
-	dq, err := NewBounded(size)
+	dq, err := NewBounded[int](size)
 	if err != nil {
 		t.Fatalf("NewBounded(%d) failed - %s", size, err)
 	}
@@ -154,18 +150,16 @@ func TestBounded(t *testing.T) {
 		t.Fatalf("size = %d (should be %d)", dq.Len(), size)
 	}
 	val, _ := dq.Get(0)
-	i := val.(int)
-	if i != 1 {
-		t.Fatalf("Get(0) -> %d (should be %d)", i, 1)
+	if val != 1 {
+		t.Fatalf("Get(0) -> %d (should be %d)", val, 1)
 	}
 
 	dq.AppendLeft(10)
 	dq.AppendLeft(20)
 	idx := dq.Len() - 1
 	val, _ = dq.Get(idx)
-	i = val.(int)
-	if i != idx-1 {
-		t.Fatalf("Get(%d) -> %d (should be %d)", idx, i, idx-1)
+	if val != idx-1 {
+		t.Fatalf("Get(%d) -> %d (should be %d)", idx, val, idx-1)
 	}
 }
 
@@ -179,17 +173,15 @@ func TestRotate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Get(0) error: %s", err)
 	}
-	i := val.(int)
-	if i != 2 {
-		t.Fatalf("Get(0) -> %d, expected 2", i)
+	if val != 2 {
+		t.Fatalf("Get(0) -> %d, expected 2", val)
 	}
 	val, err = dq.Get(3)
 	if err != nil {
 		t.Fatalf("Get(3) error: %s", err)
 	}
-	i = val.(int)
-	if i != 1 {
-		t.Fatalf("Get(3) -> %d, expected 1", i)
+	if val != 1 {
+		t.Fatalf("Get(3) -> %d, expected 1", val)
 	}
 
 	// [0, 1, 2, 3, 4]
@@ -200,17 +192,15 @@ func TestRotate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Get(0) error: %s", err)
 	}
-	i = val.(int)
-	if i != 2 {
-		t.Fatalf("Get(0) -> %d, expected 2", i)
+	if val != 2 {
+		t.Fatalf("Get(0) -> %d, expected 2", val)
 	}
 	val, err = dq.Get(4)
 	if err != nil {
 		t.Fatalf("Get(4) error: %s", err)
 	}
-	i = val.(int)
-	if i != 1 {
-		t.Fatalf("Get(3) -> %d, expected 1", i)
+	if val != 1 {
+		t.Fatalf("Get(3) -> %d, expected 1", val)
 	}
 }
 
@@ -230,21 +220,16 @@ func TestString(t *testing.T) {
 
 func TestAppendAndGet(t *testing.T) {
 	n := 128
-	q := New()
+	q := New[int]()
 
 	for i := 0; i < n; i++ {
 		q.Append(i + 1)
 	}
 
 	for i := 0; i < n; i++ {
-		o, err := q.Get(i)
+		val, err := q.Get(i)
 		if err != nil {
 			t.Fatal(err)
-		}
-
-		val, ok := o.(int)
-		if !ok {
-			t.Fatalf("get - %d: got %T", i, o)
 		}
 
 		if val != i+1 {

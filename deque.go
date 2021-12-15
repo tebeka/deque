@@ -13,31 +13,31 @@ const (
 	Version = "0.1.2"
 )
 
-type block struct {
-	left, right *block
-	data        []interface{}
+type block[T any] struct {
+	left, right *block[T]
+	data        []T
 }
 
-func newBlock(left, right *block) *block {
-	return &block{
+func newBlock[T any](left, right *block[T]) *block[T] {
+	return &block[T]{
 		left:  left,
 		right: right,
-		data:  make([]interface{}, blockLen),
+		data:  make([]T, blockLen),
 	}
 }
 
 // Deque is a double ended queue
-type Deque struct {
-	left, right       *block
+type Deque[T any] struct {
+	left, right       *block[T]
 	leftIdx, rightIdx int /* in range(BLOCKLEN) */
 	size              int
 	maxSize           int
 }
 
 // New returns a new unbounded Deque
-func New() *Deque {
-	block := newBlock(nil, nil)
-	return &Deque{
+func New[T any]() *Deque[T] {
+	block := newBlock[T](nil, nil)
+	return &Deque[T]{
 		right:    block,
 		left:     block,
 		leftIdx:  blockCenter + 1,
@@ -49,22 +49,22 @@ func New() *Deque {
 
 // NewBounded returns a new bounded Deque
 // A bounded Deque will not grow over maxSize items
-func NewBounded(maxSize int) (*Deque, error) {
+func NewBounded[T any](maxSize int) (*Deque[T], error) {
 	if maxSize <= 0 {
 		return nil, fmt.Errorf("maxSize must be > 0 (got %d)", maxSize)
 	}
-	dq := New()
+	dq := New[T]()
 	dq.maxSize = maxSize
 	return dq, nil
 }
 
 // Len returns the number of items in the queue
-func (dq *Deque) Len() int {
+func (dq *Deque[T]) Len() int {
 	return dq.size
 }
 
 // Append appends an item to the right of the deque
-func (dq *Deque) Append(item interface{}) {
+func (dq *Deque[T]) Append(item T) {
 	if dq.rightIdx == blockLen-1 {
 		block := newBlock(dq.right, nil)
 		dq.right.right = block
@@ -80,9 +80,9 @@ func (dq *Deque) Append(item interface{}) {
 }
 
 // AppendLeft appends an item to the left of the deque
-func (dq *Deque) AppendLeft(item interface{}) {
+func (dq *Deque[T]) AppendLeft(item T) {
 	if dq.leftIdx == 0 {
-		block := newBlock(nil, dq.left)
+		block := newBlock[T](nil, dq.left)
 		dq.left.left = block
 		dq.left = block
 		dq.leftIdx = blockLen
@@ -96,9 +96,10 @@ func (dq *Deque) AppendLeft(item interface{}) {
 }
 
 // Pop removes and return the rightmost element
-func (dq *Deque) Pop() (interface{}, error) {
+func (dq *Deque[T]) Pop() (T, error) {
 	if dq.Len() == 0 {
-		return nil, fmt.Errorf("Pop from an empty Deque")
+		var z T
+		return z, fmt.Errorf("Pop from an empty Deque")
 	}
 
 	item := dq.right.data[dq.rightIdx]
@@ -120,9 +121,10 @@ func (dq *Deque) Pop() (interface{}, error) {
 }
 
 // PopLeft removes and return the leftmost element.
-func (dq *Deque) PopLeft() (interface{}, error) {
+func (dq *Deque[T]) PopLeft() (T, error) {
 	if dq.Len() == 0 {
-		return nil, fmt.Errorf("PopLeft from an empty Deque")
+		var z T
+		return z, fmt.Errorf("PopLeft from an empty Deque")
 	}
 
 	item := dq.left.data[dq.leftIdx]
@@ -144,7 +146,7 @@ func (dq *Deque) PopLeft() (interface{}, error) {
 	return item, nil
 }
 
-func (dq *Deque) locate(i int) (*block, int) {
+func (dq *Deque[T]) locate(i int) (*block[T], int) {
 	// first block
 	firstSize := blockLen - dq.leftIdx
 	if i < firstSize {
@@ -192,9 +194,10 @@ func (dq *Deque) locate(i int) (b *block, idx int) {
 */
 
 // Get return the item at position i
-func (dq *Deque) Get(i int) (interface{}, error) {
+func (dq *Deque[T]) Get(i int) (T, error) {
 	if i < 0 || i >= dq.Len() {
-		return nil, fmt.Errorf("index %d out of range", i)
+		var z T
+		return z, fmt.Errorf("index %d out of range", i)
 	}
 
 	b, idx := dq.locate(i)
@@ -203,7 +206,7 @@ func (dq *Deque) Get(i int) (interface{}, error) {
 }
 
 // Set sets the item at position i to val
-func (dq *Deque) Set(i int, val interface{}) error {
+func (dq *Deque[T]) Set(i int, val T) error {
 	if i < 0 || i >= dq.Len() {
 		return fmt.Errorf("index %d out of range", i)
 	}
@@ -215,13 +218,13 @@ func (dq *Deque) Set(i int, val interface{}) error {
 
 // Rotate rotates the queue.
 // If n is positive then rotate right n steps, otherwise rotate left -n steps
-func (dq *Deque) Rotate(n int) {
+func (dq *Deque[T]) Rotate(n int) {
 	if dq.Len() == 0 || n == 0 {
 		return
 	}
 
-	var popfn func() (interface{}, error)
-	var appendfn func(interface{})
+	var popfn func() (T, error)
+	var appendfn func(T)
 
 	if n > 0 {
 		popfn = dq.Pop
@@ -238,7 +241,7 @@ func (dq *Deque) Rotate(n int) {
 	}
 }
 
-func (dq *Deque) String() string {
+func (dq *Deque[T]) String() string {
 	var buf bytes.Buffer
 
 	fmt.Fprintf(&buf, "Deque{")
