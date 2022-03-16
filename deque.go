@@ -79,7 +79,7 @@ func (dq *Deque[T]) Append(item T) {
 // AppendLeft appends an item to the left of the deque
 func (dq *Deque[T]) AppendLeft(item T) {
 	if dq.leftIdx == 0 {
-		block := newBlock[T](nil, dq.left)
+		block := newBlock(nil, dq.left)
 		dq.left.left = block
 		dq.left = block
 		dq.leftIdx = blockLen
