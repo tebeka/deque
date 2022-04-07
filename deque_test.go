@@ -237,3 +237,30 @@ func TestAppendAndGet(t *testing.T) {
 		}
 	}
 }
+
+// TODO: Add checks, currently we only try to crash
+func FuzzDeque(f *testing.F) {
+	f.Fuzz(func(t *testing.T, actions []byte) {
+		d := New[int]()
+		for i, action := range actions {
+			switch action % 6 {
+			case 0:
+				d.Append(i)
+			case 1:
+				d.AppendLeft(i)
+			case 2:
+				d.Pop()
+			case 3:
+				d.PopLeft()
+			case 4:
+				d.Set(i, i)
+			case 5:
+				d.Rotate(i)
+			}
+
+			if n := d.Len(); n < 0 {
+				t.Fatal(n)
+			}
+		}
+	})
+}
