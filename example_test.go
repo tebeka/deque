@@ -23,7 +23,7 @@ func Example() {
 	fmt.Println(val) // 2
 
 	// Set an item
-	dq.Set(2, 9)
+	_ = dq.Set(2, 9)
 
 	// Rotate
 	dq.Rotate(-2)

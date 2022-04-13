@@ -249,11 +249,11 @@ func FuzzDeque(f *testing.F) {
 			case 1:
 				d.AppendLeft(i)
 			case 2:
-				d.Pop()
+				d.Pop() // nolint
 			case 3:
-				d.PopLeft()
+				d.PopLeft() // nolint
 			case 4:
-				d.Set(i, i)
+				d.Set(i, i) // nolint
 			case 5:
 				d.Rotate(i)
 			}
